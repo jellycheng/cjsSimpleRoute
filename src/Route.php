@@ -74,45 +74,46 @@ class Route {
         $res = '';
         $uri = $this->uri;
         $urlPattern = $this->urlPattern;
-        if(preg_match($urlPattern, $uri)) {
-            if ( $callback instanceof \Closure){
-                $callbackRes = call_user_func_array($callback, [$this, $urlPattern, $uri]);
-                $className = isset($callbackRes['className'])?$callbackRes['className']:'';
-                $method = isset($callbackRes['method'])?$callbackRes['method']:'indexAction';
-            } else {
-                //匹配规则
-                $uri = preg_replace($urlPattern, '', $uri);
-                $uriInfo = explode('?', $uri, 2);
-                $uriPath = trim(array_shift($uriInfo), '/');
+        if ( $callback instanceof \Closure) {
+            $callbackRes = call_user_func_array($callback, [$this, $urlPattern, $uri]);
+            $className = isset($callbackRes['className'])?$callbackRes['className']:'';
+            $method = isset($callbackRes['method'])?$callbackRes['method']:'indexAction';
+        } else if($urlPattern && preg_match($urlPattern, $uri)) {
+            //匹配规则
+            $uri = preg_replace($urlPattern, '', $uri);
+            $uriInfo = explode('?', $uri, 2);
+            $uriPath = trim(array_shift($uriInfo), '/');
 
-                $className = $this->getAppCtlNamespace() . 'IndexController';
-                $method = "indexAction"; //默认方法
-                if (!empty($uriPath)) {
-                    $uriPath =  explode('/', $uriPath);
-                    //控制器
-                    $className = sprintf('%s%sController', $this->getAppCtlNamespace(), ucfirst(preg_replace_callback('/(_|-|\.)([a-zA-Z])/', function($match){return '\\'.strtoupper($match[2]);}, $uriPath[0])) );
-                    //动作
-                    if (isset($uriPath[1])) {
-                        $method =  $uriPath[1] . 'Action';
-                        unset($uriPath[0], $uriPath[1]);
-                    } else {
-                        unset($uriPath[0]);
-                    }
+            $className = $this->getAppCtlNamespace() . 'IndexController';
+            $method = "indexAction"; //默认方法
+            if (!empty($uriPath)) {
+                $uriPath =  explode('/', $uriPath);
+                //控制器
+                $className = sprintf('%s%sController', $this->getAppCtlNamespace(), ucfirst(preg_replace_callback('/(_|-|\.)([a-zA-Z])/', function($match){return '\\'.strtoupper($match[2]);}, $uriPath[0])) );
+                //动作
+                if (isset($uriPath[1])) {
+                    $method =  $uriPath[1] . 'Action';
+                    unset($uriPath[0], $uriPath[1]);
+                } else {
+                    unset($uriPath[0]);
                 }
             }
-
-            if($className && class_exists($className)) {
-                $controllerObj = new $className;
-                if($method && method_exists($controllerObj, $method)) {
-                    $this->routeExists = true;
-                    $res = call_user_func(array($controllerObj, $method));
-                } else {
-                    $this->routeExists = false;
-                }
+        } else {
+            $className = '';
+            $method = '';
+        }
+        if($className && class_exists($className)) {
+            $controllerObj = new $className;
+            if($method && method_exists($controllerObj, $method)) {
+                $this->routeExists = true;
+                $res = call_user_func(array($controllerObj, $method));
             } else {
                 $this->routeExists = false;
             }
+        } else {
+            $this->routeExists = false;
         }
+
         return $res;
     }
 

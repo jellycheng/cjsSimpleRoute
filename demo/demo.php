@@ -6,7 +6,9 @@ $routeObj = CjsSimpleRoute\Route::getInstance()->init('\Demo\Controllers\\');
 $res = $routeObj->run(function($me){
     $uri = $me->getUri();
     $urlPattern = $me->getUrlPattern();
-    $uri = preg_replace($urlPattern, '', $uri);
+    if($urlPattern){
+        $uri = preg_replace($urlPattern, '', $uri);
+    }
     $uriInfo = explode('?', $uri, 2);
     $uriPath = trim(array_shift($uriInfo), '/');
 
