@@ -2,8 +2,10 @@
 include __DIR__ . '/common.php';
 
 
-
+//格式： 系统名.模块名.控制器目录1.方法名
+//      系统名.模块名.控制器目录1.控制器目录N.方法名
 $_GET['method'] = 'nfangbian.user.auth.login';
+$_GET['method'] = 'nfangbian.user.api.user.login';
 $res = \CjsSimpleRoute\MethodRouter::getInstance()->init()->run(function($methodObj, $ext){
                                                     $errorData = $methodObj->getError();
                                                     if(!$errorData['error_code']) {//正常

@@ -6,8 +6,8 @@ namespace CjsSimpleRoute;
  * method值路由（根据接口名称路由）
  */
 class MethodRouter {
-    protected $method;
-    protected $paramKey = 'method';
+    protected $method;  //通过路由参数获取的路由参数值
+    protected $paramKey = 'method';//路由参数名
     const version = "1.0.0";
     protected $error_code = 0; //错误号，0正确，其它均发生错误
     protected $error_msg = 'ok'; //错误信息

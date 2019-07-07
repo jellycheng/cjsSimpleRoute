@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set("Asia/Shanghai");
 $vendorFile = dirname(__DIR__)  .  '/vendor/autoload.php';
 if(file_exists($vendorFile)) {
     require $vendorFile;
