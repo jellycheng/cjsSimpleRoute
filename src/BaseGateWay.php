@@ -12,6 +12,7 @@ class BaseGateWay {
 
     //[ '/<类型>/<版本>/<服务>/xxx/<匹配url path的参数名>/$'=>['控制器类名', '方法名'] ]
     protected $gateWayConfig = [];
+    protected $parseResult = [];
 
     /**
      * 提取<>中的内容
@@ -59,6 +60,14 @@ class BaseGateWay {
         }
         return $ret;
     }
+
+    public function init($configFile) {
+        $config = include $configFile;
+        foreach ($config as $k=>$v) {
+            $this->appendGateWayConfig($k, $v);
+        }
+    }
+
     //没有匹配到返回空数组
     public function parse($uri) {
         $ret =[];
@@ -73,11 +82,17 @@ class BaseGateWay {
                 $ret['pattern'] = $pattern;
                 $ret['val'] = $val;
                 $ret['param'] = $newMatchUrlParam;
+                $this->parseResult = $ret;
                 return $ret;
             }
         }
+        $this->parseResult = $ret;
         return $ret;
 
+    }
+
+    public function getParseResult() {
+        return $this->parseResult;
     }
 
 }

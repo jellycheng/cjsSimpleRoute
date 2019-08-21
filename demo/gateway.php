@@ -70,3 +70,5 @@ $url = "/hdsapi/"; //匹配一个目录情况
 $res2 = $exampleGWobj->parse($url);
 var_export($res2);
 echo PHP_EOL . PHP_EOL;
+var_export($exampleGWobj->getParseResult());
+echo PHP_EOL . PHP_EOL;
